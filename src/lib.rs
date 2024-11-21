@@ -59,15 +59,23 @@ impl Guest for ExampleFdw {
         // get sheet id from foreign table options and make the request URL
         let opts = ctx.get_options(OptionsType::Table);
         let sheet_id = opts.require("sheet_id")?;
+        let use_google_oauth = opts.require_or("use_google_oauth", "false");
         let url = format!("{}/{}/gviz/tq?tqx=out:json", this.base_url, sheet_id);
-    
+        
         // make up request headers
         let headers: Vec<(String, String)> = vec![
             ("user-agent".to_owned(), "Sheets FDW".to_owned()),
             // header to make JSON response more cleaner
             ("x-datasource-auth".to_owned(), "true".to_owned()),
         ];
-    
+            
+        let oauth_token = ctx.execute_scalar("SELECT get_google_access_token()")?;
+
+        // if use_google_oauth is true, add Authorization header
+        if use_google_oauth == "true" {
+            headers.push(("Authorization".to_owned(), format!("Bearer {}", oauth_token).to_owned()));
+        }
+
         // make a request to Google API and parse response as JSON
         let req = http::Request {
             method: http::Method::Get,
