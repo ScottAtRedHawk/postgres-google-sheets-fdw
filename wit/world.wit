@@ -1,4 +1,4 @@
-package red-hawk-technologies:google_sheets_wasm_fdw@0.1.0;
+package red-hawk-technologies:google_sheets_wasm_fdw@0.1.2;
 
 world example {
     import supabase:wrappers/http@0.1.0;
