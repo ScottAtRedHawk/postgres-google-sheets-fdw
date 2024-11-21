@@ -69,7 +69,7 @@ impl Guest for ExampleFdw {
             ("x-datasource-auth".to_owned(), "true".to_owned()),
         ];
             
-        let oauth_token = ctx.execute_scalar("SELECT get_google_access_token()")?;
+        let oauth_token = ctx.execute_into_scalar::<String>("SELECT get_google_access_token()")?;
 
         // if use_google_oauth is true, add Authorization header
         if use_google_oauth == "true" {
